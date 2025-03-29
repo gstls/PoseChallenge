@@ -33,7 +33,7 @@
 
 ## 5. 프로젝트 구조
 bash
-'''
+```
 <PROJECT_ROOT>/
 ├─ dnn/
 │   ├─ model_loader.py
@@ -86,7 +86,7 @@ bash
 │   ├─ wsgi.py
 │   └─ __init__.py
 └─ manage.py
-'''
+```
 
 
 ## 6. UML 다이어그램
