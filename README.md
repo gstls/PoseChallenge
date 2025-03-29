@@ -10,7 +10,7 @@
   
 ## 3. 주요 기능
 - **실시간 자세 인식**: MediaPipe Pose를 통해 클라이언트 측에서 관절 좌표(landmarks)를 추출하고, WebSocket으로 서버에 전송  
-- **자세 판별**: Keras **MLPModel**이 전처리된 좌표를 입력받아 각 자세 확률(softmax)을 추론  
+- **자세 판별**: **MLPModel**이 전처리된 좌표를 입력받아 각 자세 확률(softmax)을 추론  
 - **5초 이상 유지 시 성공**: PoseConsumer에서 5초 이상 목표 자세를 유지하면 `effect: "success"` 메시지를 클라이언트로 전송  
 - **점수 기록 및 순위 표시**: 성공 시 걸린 시간을 `/submit_score/` 경로로 전송하여 DB에 저장하고, **score.html**에서 상위 10개 랭킹을 출력  
 - **A-Frame 시각화**: 인식된 자세를 3D 스켈레톤과 텍스트로 렌더링  
