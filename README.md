@@ -9,7 +9,7 @@
 해당 데모 영상은 홈 화면에서 시작하여, 사용자의 자세를 인식하고 성공 여부를 판정한 뒤 점수를 기록하는 전체 프로세스에 대한 영상입니다.
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/b34af2a0-5883-4762-b4e4-157f2d8d4319" width="800">
+  <img src="https://github.com/user-attachments/assets/b34af2a0-5883-4762-b4e4-157f2d8d4319" width="700">
 </p>
   
 ## 3. 주요 기능
