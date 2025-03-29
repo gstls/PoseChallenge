@@ -1,0 +1,11 @@
+Django
+daphne
+channels
+channels-redis
+django-redis
+whitenoise
+tensorflow
+numpy
+pandas
+scikit-learn
+mysqlclient
