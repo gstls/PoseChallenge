@@ -1,15 +1,13 @@
 """
 Django settings for WS project (테스트용).
 
-이 설정 파일은 민감 정보 대신 환경변수 또는 기본 dummy 값을 사용합니다.
-실제 배포 시에는 별도의 보안 설정 및 환경변수 관리를 권장합니다.
+redis 및 mysql을 별도로 설치하지 않는다면 주석의 sqlite와 channelinmemory로 대체
 """
 
 import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-# .env 파일이 있다면 로드 (필요에 따라 설치: pip install python-dotenv)
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -71,7 +69,7 @@ WSGI_APPLICATION = 'WS.wsgi.application'
 ASGI_APPLICATION = 'WS.asgi.application'
 
 # Database
-# 테스트용 MySQL 데이터베이스 설정 (환경변수로 민감 정보 관리)
+# 테스트용 MySQL 데이터베이스 설정 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -82,6 +80,17 @@ DATABASES = {
         'PORT': os.getenv('MYSQL_PORT', '3306'),
     }
 }
+
+#기본 데이터 베이스 sqlite
+"""
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+"""
+
 
 # Redis 캐시 (테스트용)
 CACHES = {
@@ -99,6 +108,21 @@ CHANNEL_LAYERS = {
         "CONFIG": {"hosts": [("127.0.0.1", 6379)]},
     },
 }
+
+# InMemory 캐시 (pose_buffer 저장)
+"""
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+    }
+}
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
+"""
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
