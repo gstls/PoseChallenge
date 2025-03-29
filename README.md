@@ -3,7 +3,7 @@
 ## 1. 프로젝트 개요
 **Pose Challenge**는 사용자가 카메라 앞에서 특정 요가 자세를 **5초 동안 유지**하면 성공으로 판정하고, 유지 시간을 기록하여 순위를 매기는 **웹 애플리케이션**입니다. MediaPipe의 **Pose** 모듈을 사용하여 실시간으로 자세 정보를 수집하고, **Keras MLP 모델**로 자세를 판별합니다. WebSocket으로 클라이언트와 서버가 실시간으로 소통하며, 자세를 일정 시간(페이지 로드 시점부터 세트 종료 시점까지)을 유지했을 때 **점수**를 DB에 기록합니다. 본 프로젝트에서는 **세트 수를 1회**로 설정했으며, 제공되는 자세는 총 **4가지**입니다: **tree**, **dog**, **warrior**, **chair**.
 
-*자세 분류 아이디어 및 코드 구조와 관련하여 [CustomPose-Classification-Mediapipe](https://github.com/naseemap47/CustomPose-Classification-Mediapipe) 리포지토리를 참조하였습니다.*
+*자세 분류 아이디어 및 코드 구조와 관련하여 [CustomPose-Classification-Mediapipe](https://github.com/naseemap47/CustomPose-Classification-Mediapipe) 리포지토리를 참조하였으며, 가상환경과 스켈레톤 3D 시각화 코드는 이전 프로젝트인 [WebPose3D-RealTime](https://github.com/gstls/WebPose3D-RealTime)를 참고하시길 바랍니다.*
 
 ## 2. 데모 영상
 - [데모 영상 링크](https://example.com/demo)  
@@ -13,8 +13,8 @@
 - **실시간 자세 인식**: MediaPipe Pose를 통해 클라이언트 측에서 관절 좌표(landmarks)를 추출하고, WebSocket으로 서버에 전송  
 - **자세 판별**: Keras **MLPModel**이 전처리된 좌표를 입력받아 각 자세 확률(softmax)을 추론  
 - **5초 이상 유지 시 성공**: PoseConsumer에서 5초 이상 목표 자세를 유지하면 `effect: "success"` 메시지를 클라이언트로 전송  
-- **점수 기록 및 순위 표시**: 성공 시 걸린 시간을 `/submit_score/` 경로로 전송하여 DB에 저장하고, **score.html**에서 상위 10개 기록을 랭킹으로 출력  
-- **A-Frame 시각화**: 인식된 자세를 3D 스켈레톤으로 표현하여 사용자에게 직관적인 피드백을 제공  
+- **점수 기록 및 순위 표시**: 성공 시 걸린 시간을 `/submit_score/` 경로로 전송하여 DB에 저장하고, **score.html**에서 상위 10개 랭킹을 출력  
+- **A-Frame 시각화**: 인식된 자세를 3D 스켈레톤과 텍스트로 렌더링  
 
 ## 4. 기술 스택
 - **프론트엔드**  
@@ -32,7 +32,6 @@
 
 
 ## 5. 프로젝트 구조
-bash
 ```
 <PROJECT_ROOT>/
 ├─ dnn/
@@ -94,6 +93,8 @@ bash
 ### 6.1 시퀀스 다이어그램
 아래는 사용자(클라이언트)와 서버(Consumer)가 실시간으로 통신하며 자세를 인식하고, 5초 유지 시 점수 기록이 진행되는 흐름을 나타냅니다:
 
+![Image](https://github.com/user-attachments/assets/c759bf86-53c7-4721-af4a-e0658b077ef5)
+
 1. **클라이언트(WebSocket)**: 좌표(coords) 전송  
 2. **서버(PoseConsumer)**: Keras MLP 모델을 사용하여 추론 후, 5초 유지 시 `effect: "success"` 메시지를 클라이언트로 전송  
 3. **클라이언트**: 성공 신호를 수신하고 `/submit_score/` 뷰로 fetch(POST)하여 DB(Score)에 점수를 기록  
@@ -101,6 +102,8 @@ bash
 
 ### 6.2 클래스 다이어그램
 다음은 프로젝트 주요 클래스(모델, Consumer, WebSocket 등) 간 관계를 보여주는 다이어그램입니다:
+
+![Image](https://github.com/user-attachments/assets/7a95c251-f4d2-447a-a442-c564cb9c1ada)
 
 - **ClientWebSocket** ↔ **PoseConsumer**: WebSocket을 통한 실시간 데이터 교환
 - **PoseConsumer** → **RedisCache**: 채널별 상태(목표 자세, 시작 시점 등) 저장
