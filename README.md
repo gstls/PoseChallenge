@@ -1,14 +1,13 @@
 # Pose Challenge
 
 ## 1. 프로젝트 개요
-**Pose Challenge**는 사용자가 카메라 앞에서 특정 요가 자세를 **5초 동안 유지**하면 성공으로 판정하고, 유지 시간을 기록하여 순위를 매기는 **웹 애플리케이션**입니다. MediaPipe의 **Pose** 모듈을 사용하여 실시간으로 자세 정보를 수집하고, **Keras MLP 모델**로 자세를 판별합니다. WebSocket으로 클라이언트와 서버가 실시간으로 소통하며, 자세를 일정 시간(페이지 로드 시점부터 세트 종료 시점까지)을 유지했을 때 **점수**를 DB에 기록합니다. 본 프로젝트에서는 **세트 수를 1회**로 설정했으며, 제공되는 자세는 총 **4가지**입니다: **tree**, **dog**, **warrior**, **chair**.
+**Pose Challenge**는 사용자가 카메라 앞에서 특정 요가 자세를 **5초 동안 유지**하면 성공으로 판정하고, 유지 시간을 기록하여 순위를 매기는 **웹 애플리케이션**입니다. **MediaPipe**의 **Pose** 모듈을 사용하여 실시간으로 자세 정보를 수집하고, **Keras MLP 모델**로 자세를 판별합니다. WebSocket으로 클라이언트와 서버가 실시간으로 소통하며, 자세를 일정 시간(페이지 로드 시점부터 세트 종료 시점까지)을 유지했을 때 **점수**를 DB에 기록합니다. 본 프로젝트에서는 **세트 수를 1회**로 설정했으며, 제공되는 자세는 총 **4가지**입니다: **tree**, **dog**, **warrior**, **chair**.
 
 *자세 분류 아이디어 및 코드 구조와 관련하여 [CustomPose-Classification-Mediapipe](https://github.com/naseemap47/CustomPose-Classification-Mediapipe) 리포지토리를 참조하였으며, 가상환경과 스켈레톤 3D 시각화 코드는 이전 프로젝트인 [WebPose3D-RealTime](https://github.com/gstls/WebPose3D-RealTime)를 참고하시길 바랍니다.*
 
 ## 2. 데모 영상
 - [데모 영상 링크](https://example.com/demo)  
-  (데모 영상을 YouTube 등의 링크로 연결하거나, GIF 이미지를 삽입할 수도 있습니다.)
-
+  
 ## 3. 주요 기능
 - **실시간 자세 인식**: MediaPipe Pose를 통해 클라이언트 측에서 관절 좌표(landmarks)를 추출하고, WebSocket으로 서버에 전송  
 - **자세 판별**: Keras **MLPModel**이 전처리된 좌표를 입력받아 각 자세 확률(softmax)을 추론  
@@ -110,3 +109,4 @@
 - **PoseConsumer** → **MLPModel, LabelEncoder**: 자세 추론
 - **SubmitScoreView** → **Score**: DB에 최종 점수 저장  
   **Score** ↔ **Session** 관계
+
