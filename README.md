@@ -6,7 +6,11 @@
 *자세 분류 아이디어 및 코드 구조와 관련하여 [CustomPose-Classification-Mediapipe](https://github.com/naseemap47/CustomPose-Classification-Mediapipe) 리포지토리를 참조하였으며, 가상환경과 스켈레톤 3D 시각화 코드는 이전 프로젝트인 [WebPose3D-RealTime](https://github.com/gstls/WebPose3D-RealTime)를 활용하였습니다.*
 
 ## 2. 데모 영상
-- [데모 영상 링크](https://example.com/demo)  
+해당 데모 영상은 홈 화면에서 시작하여, 사용자의 자세를 인식하고 성공 여부를 판정한 뒤 점수를 기록하는 전체 프로세스에 대한 영상입니다.
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/b34af2a0-5883-4762-b4e4-157f2d8d4319" width="800">
+</p>
   
 ## 3. 주요 기능
 - **실시간 자세 인식**: MediaPipe Pose를 통해 클라이언트 측에서 관절 좌표(landmarks)를 추출하고, WebSocket으로 서버에 전송  
