@@ -1,0 +1,147 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MediaPipe Pose with A-Frame</title>
+    <style>
+      /* ── CSS는 그대로 index.html에 포함 ── */
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      .abs { position: absolute; }
+      a { color: white; text-decoration: none; }
+      a:hover { color: lightblue; }
+      body {
+        bottom: 0; font-family: 'Titillium Web', sans-serif; color: white;
+        left: 0; margin: 0; position: absolute; right: 0; top: 0;
+        transform-origin: 0px 0px; overflow: hidden;
+      }
+      /* 웹캠 화면 */
+      .webcam-container {
+        position: fixed; top: 0px; left: 0px; z-index: 1000;
+        width: 160px; transform: scale(2); transform-origin: top left;
+      }
+      /* 로고 및 미디어파이프 URL */
+      .container {
+        display: none; position: absolute; background-color: #596e73;
+        width: 100%; max-height: 100%;
+      }
+      .input_video {
+        display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      }
+      .input_video.selfie { transform: scale(-1, 1); }
+      .output_canvas {
+        width: 100%; display: block; position: relative; left: 0; top: 0;
+      }
+      .input_image { position: absolute; }
+      .canvas-container {
+        display: flex; height: 100%; width: 100%;
+        justify-content: center; align-items: center;
+      }
+      .logo { bottom: 10px; right: 20px; }
+      .logo .title { color: white; font-size: 28px; }
+      .logo .subtitle {
+        position: relative; color: white; font-size: 10px; left: -30px; top: 20px;
+      }
+      .control-panel { position: absolute; left: 10px; top: 10px; display: none; }
+      .loading {
+        display: flex; position: absolute; top: 0; right: 0; bottom: 0; left: 0;
+        align-items: center; backface-visibility: hidden; justify-content: center;
+        opacity: 1; transition: opacity 1s;
+      }
+      .loading .message { font-size: x-large; }
+      .loading .spinner {
+        position: absolute; width: 120px; height: 120px;
+        animation: spin 1s linear infinite;
+        border: 32px solid #bebebe; border-top: 32px solid #3498db;
+        border-radius: 50%;
+      }
+      .loaded .loading { opacity: 0; }
+      .shoutout {
+        left: 0; right: 0; bottom: 40px; text-align: center; font-size: 24px; position: absolute;
+      }
+      .square-box {
+        width: 33%; height: 0; padding-top: 33%;
+        position: absolute; right: 20px; top: 20px; display: none;
+      }
+      .landmark-grid-container {
+        height: 100%; width: 100%; position: absolute; top: 0; left: 0;
+        background-color: #99999999;
+      }
+      /* Follow Mode 토글 버튼 스타일 */
+      #toggleFollow {
+        position: absolute; top: 10px; right: 10px; z-index: 2000;
+        padding: 8px 12px; background-color: rgba(0,0,0,0.6); color: white;
+        border: none; cursor: pointer; font-size: 16px;
+      }
+    </style>
+    <!-- 외부 라이브러리 스크립트 -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3.1632432234/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils@0.6.1629159505/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils_3d@0.3.1635987963/control_utils_3d.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils@0.3.1620248257/drawing_utils.js" crossorigin="anonymous"></script>
+    <!-- MediaPipe Pose 스크립트 (버전을 명시) -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1635988162/pose.js" crossorigin="anonymous"></script>
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-particle-system-component/dist/aframe-particle-system-component.min.js"></script>
+    <script src="https://unpkg.com/aframe-text-geometry-component/dist/aframe-text-geometry-component.min.js"></script>
+    <script src="https://unpkg.com/aframe-environment-component@1.3.3/dist/aframe-environment-component.min.js"></script>
+  </head>
+  <body>
+    <!-- A-Frame 가상환경 -->
+    <a-scene>
+      <!-- 환경 -->
+      <a-entity environment="preset: starry; groundColor: #24243e; terrain: true; terrainScale: 1000; grid: cross" position="0 -0.3 0"></a-entity>
+      <!-- Sky -->
+      <a-sky color="#87CEEB"></a-sky>
+      <a-text id="shoulderText" position="2 2 -3" color="black"></a-text>
+      <a-text id="shoulderText2" position="2 4 -3" color="black"></a-text>
+      <!-- Sun -->
+      <a-light type="directional" position="-5 5 5" target="#ground" intensity="1.5" castShadow="true"></a-light>
+      <!-- Visible Sun -->
+      <a-sphere id="poseSphere" position="-5 15 5" radius="1" color="#FFD700" material="emissive: #FFD700" move-with-camera></a-sphere>
+      <!-- 스켈레톤 엔티티 -->
+      <a-entity id="skeleton" position="0 2 -3"></a-entity>
+      <!-- 추가 오브젝트: 스켈레톤 뒤에 배치 -->
+      <a-box id="extraObject" position="0 0.3 -4" rotation="0 45 0" color="#4CC3D9" depth="0.5" height="0.5" width="0.5"></a-box>
+      <!-- 카메라 엔티티 (사용자 카메라: WASD 컨트롤 활성화) -->
+      <a-entity id="cameraRig" movement-controls="fly: true" position="0 0 0">
+        <a-entity id="userCamera" camera look-controls wasd-controls="enabled: true" position="1.5 1 0"></a-entity>
+      </a-entity>
+    </a-scene>
+
+    <!-- Follow Mode 토글 버튼 -->
+    <button id="toggleFollow">Follow Skeleton: OFF</button>
+
+    <div class="webcam-container">
+      <video id="webcamVideo" class="input_video" autoplay playsinline></video>
+      <canvas class="output_canvas"></canvas>
+      <p id="received_data"></p>
+    </div>
+    <div class="container">
+      <div class="loading">
+        <div class="spinner"></div>
+        <div class="message">Loading</div>
+      </div>
+      <a class="abs logo" href="http://www.mediapipe.dev" target="_blank">
+        <div style="display: flex; align-items: center; bottom: 0; right: 10px;">
+          <span class="title">MediaPipe</span>
+        </div>
+      </a>
+      <div class="shoutout">
+        <div><a href="https://solutions.mediapipe.dev/pose">Click here for more info</a></div>
+      </div>
+    </div>
+    <div class="control-panel"></div>
+    <div class="square-box">
+      <div class="landmark-grid-container"></div>
+    </div>
+
+    <!-- 메인 JS 모듈 (Django static 태그 적용) -->
+    <script type="module" src="{% static 'js/posemodule/main.js' %}"></script>
+  </body>
+</html>

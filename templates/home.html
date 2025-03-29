@@ -1,0 +1,24 @@
+<!-- home.html -->
+{% load static %}
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+  <div id="react-root"></div>
+{% endblock %}
+
+{% block extra_js %}
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script>
+    var startUrl = "{% url 'pose' %}";
+    // 이미지 경로 정의 (static/img/ 폴더 내)
+    var CHAIR_URL = "{% static 'img/chair.jpg' %}";
+    var TREE_URL = "{% static 'img/tree.jpg' %}";
+    var WARRIOR_URL = "{% static 'img/warrior.jpg' %}";
+    var DOG_URL = "{% static 'img/dog.jpg' %}";
+  </script>
+  <script type="text/babel" src="{% static 'js/home/home.js' %}"></script>
+{% endblock %}

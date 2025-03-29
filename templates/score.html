@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pose Challenge Rankings</title>
+  <link rel="stylesheet" href="{% static 'css/score.css' %}">
+</head>
+<body>
+  <h1>Pose Challenge Rankings</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Rank</th>
+        <th>Time (sec)</th>
+        <th>Recorded At</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for score in scores %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ score.total_time|floatformat:2 }}</td>
+        <td>{{ score.created_at|date:"Y-m-d H:i:s" }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="3">No scores available.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="button-container">
+    <button class="button-home" onclick="location.href='{% url 'home' %}'">Home</button>
+    <button class="button-retry" onclick="location.href='{% url 'pose' %}'">Retry</button>
+  </div>
+  <div class="footer">
+    &copy; 2025 Pose Challenge
+  </div>
+</body>
+</html>
