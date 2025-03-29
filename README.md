@@ -110,3 +110,26 @@
 - **SubmitScoreView** → **Score**: DB에 최종 점수 저장  
   **Score** ↔ **Session** 관계
 
+## 7. 설치 및 실행 가이드
+
+1. **프로젝트 클론 & 접속**  
+2. **Python 가상환경 구성**  
+3. **필요 라이브러리 설치**  
+4. **DB 마이그레이션 & 서버 실행**  
+
+
+```bash
+# 1. 프로젝트 클론 & 접속
+git clone https://github.com/gstls/PoseChallenge.git
+cd PoseChallenge
+
+# 2. Python 가상환경 구성
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+
+# 3. 필요 라이브러리 설치
+pip install -r requirements.txt
+
+# 4. DB 마이그레이션 & 서버 실행
+python manage.py migrate
+python manage.py runserver
