@@ -29,3 +29,81 @@
   - **scikit-learn** (LabelEncoder)
 - **데이터베이스**  
   - **MySQL**
+
+
+## 5. 프로젝트 구조
+bash
+'''
+<PROJECT_ROOT>/
+├─ dnn/
+│   ├─ model_loader.py
+│   ├─ poseLandmark_csv.py       # 특징 추출 
+│   ├─ poseModel.py              # 모델 학습 
+│   └─ model/
+│       ├─ label_encoder.pkl
+│       └─ pose_model.h5
+├─ motiontrack/
+│   ├─ admin.py
+│   ├─ apps.py
+│   ├─ consumers.py              # WebSocket 관련 로직
+│   ├─ models.py                 # Session, Score 모델
+│   ├─ routing.py                # Channels routing
+│   ├─ tests.py
+│   ├─ urls.py                   # URL 패턴 정의
+│   ├─ views.py                  # submit_score 등 Django view
+│   └─ __init__.py
+├─ static/
+│   ├─ css/
+│   │      home.css
+│   │      score.css
+│   ├─ img/
+│   │      chair.jpg
+│   │      cobra.jpg
+│   │      dog.jpg
+│   │      tree.jpg
+│   │      warrior.jpg
+│   └─ js/
+│       ├─ home/
+│       │     home.js
+│       └─ posemodule/            # 클라이언트 가상환경 구체 렌더링 
+│              constants.js
+│              effect.js
+│              kalmanfilter.js
+│              main.js
+│              mathutils.js
+│              posehandler.js
+│              skeletonmapping.js
+│              socket.js
+│              uicontrols.js
+├─ templates/                     # 홈, 메인, 스코어 뷰
+│       home.html
+│       pose.html
+│       score.html
+├─ WS/
+│   ├─ asgi.py
+│   ├─ settings.py
+│   ├─ urls.py
+│   ├─ wsgi.py
+│   └─ __init__.py
+└─ manage.py
+'''
+
+
+## 6. UML 다이어그램
+
+### 6.1 시퀀스 다이어그램
+아래는 사용자(클라이언트)와 서버(Consumer)가 실시간으로 통신하며 자세를 인식하고, 5초 유지 시 점수 기록이 진행되는 흐름을 나타냅니다:
+
+1. **클라이언트(WebSocket)**: 좌표(coords) 전송  
+2. **서버(PoseConsumer)**: Keras MLP 모델을 사용하여 추론 후, 5초 유지 시 `effect: "success"` 메시지를 클라이언트로 전송  
+3. **클라이언트**: 성공 신호를 수신하고 `/submit_score/` 뷰로 fetch(POST)하여 DB(Score)에 점수를 기록  
+4. **서버**: 기록 후 **score.html** 페이지로 리다이렉트
+
+### 6.2 클래스 다이어그램
+다음은 프로젝트 주요 클래스(모델, Consumer, WebSocket 등) 간 관계를 보여주는 다이어그램입니다:
+
+- **ClientWebSocket** ↔ **PoseConsumer**: WebSocket을 통한 실시간 데이터 교환
+- **PoseConsumer** → **RedisCache**: 채널별 상태(목표 자세, 시작 시점 등) 저장
+- **PoseConsumer** → **MLPModel, LabelEncoder**: 자세 추론
+- **SubmitScoreView** → **Score**: DB에 최종 점수 저장  
+  **Score** ↔ **Session** 관계
