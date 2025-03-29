@@ -1,3 +1,58 @@
-# Default ignored files
+# Python bytecode 및 캐시 파일
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# 배포 관련 파일
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+
+# Django 관련
+*.log
+*.pot
+*.pyc
+local_settings.py
+
+# 정적 파일 (Collectstatic 결과)
+staticfiles/
+
+# 미디어 파일
+media/
+
+# 가상환경
+.env
+.venv/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE 및 에디터 설정
+.idea/
+*.sublime-project
+*.sublime-workspace
+.vscode/
+workspace.xml
+*.iml
+
+# 운영체제 파일
+.DS_Store
+Thumbs.db
+
+# 커스텀 무시 항목
 /shelf/
-/workspace.xml
