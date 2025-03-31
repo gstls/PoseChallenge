@@ -60,7 +60,6 @@
 │   │      score.css
 │   ├─ img/
 │   │      chair.jpg
-│   │      cobra.jpg
 │   │      dog.jpg
 │   │      tree.jpg
 │   │      warrior.jpg
